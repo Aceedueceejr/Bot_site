@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Botverse - Smart Bot Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="p-6 flex justify-between items-center bg-gray-800 shadow">
+    <h1 class="text-2xl font-bold text-blue-400">🤖 Botverse</h1>
+    <nav class="space-x-4">
+      <a href="#services" class="hover:text-blue-400">Services</a>
+      <a href="#quote" class="hover:text-blue-400">Quote</a>
+      <a href="#pricing" class="hover:text-blue-400">Pricing</a>
+      <a href="#portfolio" class="hover:text-blue-400">Portfolio</a>
+      <a href="#faq" class="hover:text-blue-400">FAQ</a>
+      <a href="#contact" class="hover:text-blue-400">Contact</a>
+      <a href="#auth" class="hover:text-yellow-400 font-semibold">Login</a>
+    </nav>
+  </header>
+
+  <!-- Login & Signup Section -->
+  <section id="auth" class="py-20 px-6 bg-gray-900">
+    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl">
+      <h2 class="text-2xl font-bold mb-4 text-center">Client Login</h2>
+      <input id="email" type="email" placeholder="Email" class="w-full p-3 mb-3 bg-gray-700 rounded text-white">
+      <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-3 bg-gray-700 rounded text-white">
+      <div class="flex justify-between space-x-2">
+        <button onclick="login()" class="w-1/2 bg-blue-500 py-2 rounded hover:bg-blue-600">Login</button>
+        <button onclick="signup()" class="w-1/2 bg-green-500 py-2 rounded hover:bg-green-600">Sign Up</button>
+      </div>
+      <p id="authStatus" class="mt-4 text-center text-sm text-red-400"></p>
+    </div>
+  </section>
+
+  <section id="dashboard" class="hidden py-20 px-6 bg-gray-800">
+    <div class="max-w-2xl mx-auto bg-gray-900 p-6 rounded-xl text-white">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Client Dashboard</h2>
+        <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600">Logout</button>
+      </div>
+      <p>Welcome! Here you can track your bot project status, updates, and more.</p>
+      <div class="mt-6">
+        <h3 class="font-semibold text-lg mb-2">Your Projects</h3>
+        <ul class="space-y-2 text-gray-300">
+          <li>🤖 AI Chatbot - <span class="text-green-400">In Development</span></li>
+          <li>💬 Discord Music Bot - <span class="text-yellow-400">Pending</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => { showDashboard(); })
+        .catch(err => {
+          document.getElementById("authStatus").innerText = err.message;
+        });
+    }
+
+    function signup() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => { showDashboard(); })
+        .catch(err => {
+          document.getElementById("authStatus").innerText = err.message;
+        });
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        document.getElementById("dashboard").classList.add("hidden");
+        document.getElementById("auth").classList.remove("hidden");
+      });
+    }
+
+    function showDashboard() {
+      document.getElementById("auth").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) showDashboard();
+    });
+  </script>
+</body>
+</html>
